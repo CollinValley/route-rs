@@ -16,14 +16,6 @@ pub struct ForkLink<Packet: Clone + Send> {
 }
 
 impl<Packet: Clone + Send> ForkLink<Packet> {
-    pub fn new() -> Self {
-        ForkLink {
-            in_stream: None,
-            queue_capacity: 10,
-            num_egressors: None,
-        }
-    }
-
     /// Changes queue_capacity, default value is 10.
     pub fn queue_capacity(self, queue_capacity: usize) -> Self {
         assert!(
@@ -53,6 +45,14 @@ impl<Packet: Clone + Send> ForkLink<Packet> {
 }
 
 impl<Packet: Send + Clone + 'static> LinkBuilder<Packet, Packet> for ForkLink<Packet> {
+    fn new() -> Self {
+        ForkLink {
+            in_stream: None,
+            queue_capacity: 10,
+            num_egressors: None,
+        }
+    }
+
     fn ingressors(self, mut in_streams: Vec<PacketStream<Packet>>) -> Self {
         assert_eq!(
             in_streams.len(),

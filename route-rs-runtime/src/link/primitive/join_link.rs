@@ -15,13 +15,6 @@ pub struct JoinLink<Packet: Send + Clone> {
 }
 
 impl<Packet: Send + Clone> JoinLink<Packet> {
-    pub fn new() -> Self {
-        JoinLink {
-            in_streams: None,
-            queue_capacity: 10,
-        }
-    }
-
     /// Changes queue_capacity, default value is 10.
     pub fn queue_capacity(self, queue_capacity: usize) -> Self {
         assert!(
@@ -37,6 +30,13 @@ impl<Packet: Send + Clone> JoinLink<Packet> {
 }
 
 impl<Packet: Send + Clone + 'static> LinkBuilder<Packet, Packet> for JoinLink<Packet> {
+    fn new() -> Self {
+        JoinLink {
+            in_streams: None,
+            queue_capacity: 10,
+        }
+    }
+
     fn ingressors(self, in_streams: Vec<PacketStream<Packet>>) -> Self {
         assert!(
             !in_streams.is_empty(),

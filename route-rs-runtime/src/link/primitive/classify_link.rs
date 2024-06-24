@@ -20,16 +20,6 @@ pub struct ClassifyLink<C: Classifier> {
 }
 
 impl<C: Classifier> ClassifyLink<C> {
-    pub fn new() -> Self {
-        ClassifyLink {
-            in_stream: None,
-            classifier: None,
-            dispatcher: None,
-            queue_capacity: 10,
-            num_egressors: None,
-        }
-    }
-
     pub fn classifier(self, classifier: C) -> Self {
         ClassifyLink {
             in_stream: self.in_stream,
@@ -83,6 +73,16 @@ impl<C: Classifier> ClassifyLink<C> {
 }
 
 impl<C: Classifier + Send + 'static> LinkBuilder<C::Packet, C::Packet> for ClassifyLink<C> {
+    fn new() -> Self {
+        ClassifyLink {
+            in_stream: None,
+            classifier: None,
+            dispatcher: None,
+            queue_capacity: 10,
+            num_egressors: None,
+        }
+    }
+
     fn ingressors(self, mut in_streams: Vec<PacketStream<C::Packet>>) -> Self {
         assert_eq!(
             in_streams.len(),

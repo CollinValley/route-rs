@@ -13,14 +13,6 @@ pub struct DropLink<I> {
 }
 
 impl<I> DropLink<I> {
-    pub fn new() -> Self {
-        DropLink {
-            in_stream: None,
-            drop_chance: None,
-            seed: None,
-        }
-    }
-
     pub fn drop_chance(self, chance: f64) -> Self {
         DropLink {
             in_stream: self.in_stream,
@@ -39,6 +31,14 @@ impl<I> DropLink<I> {
 }
 
 impl<I: Send + Clone + 'static> LinkBuilder<I, I> for DropLink<I> {
+    fn new() -> Self {
+        DropLink {
+            in_stream: None,
+            drop_chance: None,
+            seed: None,
+        }
+    }
+
     fn ingressors(self, mut ingress_streams: Vec<PacketStream<I>>) -> Self {
         assert_eq!(
             ingress_streams.len(),

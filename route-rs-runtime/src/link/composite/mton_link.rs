@@ -12,15 +12,6 @@ pub struct MtoNLink<Packet: Sized + Send + Clone> {
 }
 
 impl<Packet: Sized + Send + Clone> MtoNLink<Packet> {
-    pub fn new() -> Self {
-        MtoNLink {
-            in_streams: None,
-            join_queue_capacity: 10,
-            fork_queue_capacity: 10,
-            num_egressors: None,
-        }
-    }
-
     /// Changes join_queue_capcity, default value is 10.
     pub fn join_queue_capacity(self, queue_capacity: usize) -> Self {
         assert!(
@@ -67,6 +58,15 @@ impl<Packet: Sized + Send + Clone> MtoNLink<Packet> {
 }
 
 impl<Packet: Sized + Send + Clone + 'static> LinkBuilder<Packet, Packet> for MtoNLink<Packet> {
+    fn new() -> Self {
+        MtoNLink {
+            in_streams: None,
+            join_queue_capacity: 10,
+            fork_queue_capacity: 10,
+            num_egressors: None,
+        }
+    }
+
     fn ingressors(self, in_streams: Vec<PacketStream<Packet>>) -> Self {
         assert!(
             !in_streams.is_empty(),

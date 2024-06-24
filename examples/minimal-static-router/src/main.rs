@@ -56,15 +56,13 @@ pub struct Router {
     in_streams: Option<Vec<PacketStream<EthernetFrame>>>,
 }
 
-impl Router {
-    pub fn new() -> Self {
-        Router { in_streams: None }
-    }
-}
-
 // Then we declare it is a link that take in EthernetFrames and outputs EthernetFrames
 // LinkBuilder is always generic, so we need to fill out EthernetFrame
 impl LinkBuilder<EthernetFrame, EthernetFrame> for Router {
+    fn new() -> Self {
+        Router { in_streams: None }
+    }
+
     fn ingressors(self, in_streams: Vec<PacketStream<EthernetFrame>>) -> Self {
         assert!(
             in_streams.len() == 1,

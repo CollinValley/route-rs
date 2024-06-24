@@ -19,14 +19,6 @@ pub struct QueueLink<P: Processor> {
 }
 
 impl<P: Processor> QueueLink<P> {
-    pub fn new() -> Self {
-        QueueLink {
-            in_stream: None,
-            processor: None,
-            queue_capacity: 10,
-        }
-    }
-
     /// Changes queue_capacity, default value is 10.
     pub fn queue_capacity(self, queue_capacity: usize) -> Self {
         assert!(
@@ -44,6 +36,14 @@ impl<P: Processor> QueueLink<P> {
 }
 
 impl<P: Processor + Send + 'static> LinkBuilder<P::Input, P::Output> for QueueLink<P> {
+    fn new() -> Self {
+        QueueLink {
+            in_stream: None,
+            processor: None,
+            queue_capacity: 10,
+        }
+    }
+
     fn ingressors(self, mut in_streams: Vec<PacketStream<P::Input>>) -> Self {
         assert_eq!(
             in_streams.len(),

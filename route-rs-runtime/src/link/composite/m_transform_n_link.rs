@@ -14,16 +14,6 @@ pub struct MtransformNLink<P: Processor + Send> {
 }
 
 impl<P: Processor + Send> MtransformNLink<P> {
-    pub fn new() -> Self {
-        MtransformNLink {
-            in_streams: None,
-            processor: None,
-            join_queue_capacity: 10,
-            fork_queue_capacity: 10,
-            num_egressors: None,
-        }
-    }
-
     /// Changes join_queue_capcity, default value is 10.
     pub fn join_queue_capacity(self, queue_capacity: usize) -> Self {
         assert!(
@@ -70,6 +60,16 @@ impl<P: Processor + Send> MtransformNLink<P> {
 }
 
 impl<P: Processor + Send + 'static> LinkBuilder<P::Input, P::Output> for MtransformNLink<P> {
+    fn new() -> Self {
+        MtransformNLink {
+            in_streams: None,
+            processor: None,
+            join_queue_capacity: 10,
+            fork_queue_capacity: 10,
+            num_egressors: None,
+        }
+    }
+
     fn ingressors(self, in_streams: Vec<PacketStream<P::Input>>) -> Self {
         assert!(
             !in_streams.is_empty(),

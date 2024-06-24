@@ -39,6 +39,10 @@ pub type Link<Output> = (Vec<TokioRunnable>, Vec<PacketStream<Output>>);
 /// The two type parameters, Input and Output, refer to the input and output types of the Link.
 /// You can tell because the ingress/egress streams are of type `PacketStream<Input>`/`PacketStream<Output>` respectively.
 pub trait LinkBuilder<Input, Output> {
+    /// This is a builder struct, so we want to initialize without any parameters, and then pass
+    /// each of our arguments in dedicated builder methods.
+    fn new() -> Self;
+
     /// Links need a way to receive input from upstream.
     /// Some Links such as `ProcessLink` will only need at most 1, but others can accept many.
     /// Links that can not support the number of ingressors provided will panic. Links that already have
@@ -59,4 +63,16 @@ pub trait LinkBuilder<Input, Output> {
 /// Inputs and Outputs match that of their `Processor`.
 pub trait ProcessLinkBuilder<P: Processor>: LinkBuilder<P::Input, P::Output> {
     fn processor(self, processor: P) -> Self;
+}
+
+pub trait IngressLinkBuilder<Packet>: LinkBuilder<(), Packet> {
+    type Receiver;
+
+    fn channel(self, receiver: Self::Receiver) -> Self;
+}
+
+pub trait EgressLinkBuilder<Packet>: LinkBuilder<Packet, ()> {
+    type Sender;
+
+    fn channel(self, sender: Self::Sender) -> Self;
 }

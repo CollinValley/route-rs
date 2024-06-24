@@ -13,19 +13,17 @@ pub struct ProcessLink<P: Processor> {
     processor: Option<P>,
 }
 
-impl<P: Processor> ProcessLink<P> {
-    pub fn new() -> Self {
+/// Although `Link` allows an arbitrary number of ingressors and egressors, `ProcessLink`
+/// may only have one ingress and egress stream since it lacks some kind of queue
+/// storage.
+impl<P: Processor + Send + 'static> LinkBuilder<P::Input, P::Output> for ProcessLink<P> {
+    fn new() -> Self {
         ProcessLink {
             in_stream: None,
             processor: None,
         }
     }
-}
 
-/// Although `Link` allows an arbitrary number of ingressors and egressors, `ProcessLink`
-/// may only have one ingress and egress stream since it lacks some kind of queue
-/// storage.
-impl<P: Processor + Send + 'static> LinkBuilder<P::Input, P::Output> for ProcessLink<P> {
     fn ingressors(self, mut in_streams: Vec<PacketStream<P::Input>>) -> Self {
         assert_eq!(
             in_streams.len(),
